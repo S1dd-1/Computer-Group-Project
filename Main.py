@@ -2,7 +2,7 @@ import mysql.connector as mys
 mycon = mys.connect(host = 'localhost', user = 'root', passwd = '1234')
 c = mycon.cursor()
 
-c.execute("drop database SK")
+c.execute("drop database SK") # Remove this in the final version
 c.execute("create database if not exists SK")
 c.execute("use SK")
 c.execute("create table Pantry (ItemNo integer primary key auto_increment, Name varchar(30), Qty integer, Expiry date)")
