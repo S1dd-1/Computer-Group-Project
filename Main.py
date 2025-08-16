@@ -25,9 +25,6 @@ for i in RecipeEntries:
 
 mycon.commit()
 
-def EnterItem():
-    
-
 # (1,"egg",2,'2021-2-12')
 
 ch = 'y'
