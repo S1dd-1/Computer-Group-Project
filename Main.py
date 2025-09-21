@@ -6,6 +6,41 @@ import mysql.connector as mys
 mycon = mys.connect(host = 'localhost', user = 'root', passwd = '1234')
 c = mycon.cursor()
 
+def print_table(L):
+    def print_border():
+        print("+", end = "")
+        for i in lens:
+            print("-"*(i+2)+"+", end = "")
+        print()
+
+    L = list(L)
+
+    lens = []
+    for i in L[0]:
+        lens.append([])
+
+    for i in range(len(L)):
+        L[i] = list(L[i])
+        for j in range(len(L[i])):
+            L[i][j] = str(L[i][j])
+            lens[j].append(len(L[i][j]))
+
+    for i in range(len(lens)):
+        lens[i] = max(lens[i])
+
+    for i in range(len(L)):
+        for j in range(len(L[i])):
+            while len(L[i][j]) < lens[j]:
+                L[i][j] += " "
+
+    print_border()
+    for i in range(len(L)):
+        print("|", end = "")
+        for j in range(len(L[i])):
+            print(" "+L[i][j]+" ", end = "|")
+        print()
+    print_border()
+
 c.execute("drop database if exists SmartKitchen") # Remove in Final Version
 c.execute("create database SmartKitchen")
 c.execute("use SmartKitchen")
@@ -30,18 +65,19 @@ for i in RecipeEntries:
     c.execute("insert into Recipes values" + str(i))
 mycon.commit()
 
-current_date = date.today()
-
 go = True
 while go:
-    print("\n MENU \n What would you like to do? \n 1. View available food stuffs \n 2. View available dishes \n 3. Update pantry's contents \n 4. Close")
-    ans = int(input("> "))
+    current_date = str(date.today())
 
-    c.execute("select itemno from pantry where qty <= 0 and expiry < '{0}'".format(current_date))
+    print("\n MENU \n What would you like to do? \n 1. View available food stuffs \n 2. View available dishes \n 3. Update pantry's contents \n 4. Close \n")
+    ans = int(input("> "))
+    print()
+
+    c.execute("select itemno from pantry where qty <= 0 or expiry < '{0}'".format(current_date))
     data = c.fetchall()
     for row in data:
         c.execute("delete from pantry where itemno = '{0}'".format(row[0]))
-    c.commit()
+    mycon.commit()
 
     if ans == 1:
         c.execute("select itemno, name, qty from pantry")
@@ -51,8 +87,7 @@ while go:
             print("Your pantry is empty.")
 
         else:
-            for row in data:
-                print(row)
+            print_table(data)
             eat1 = input("Would you like to take an item? (y/n): ")
 
             if eat1.lower() == 'y':
@@ -117,7 +152,7 @@ while go:
     elif ans == 3:
         name = input("Enter ingredient's name: ")
         qty = int(input("Enter quantity: "))
-        exp = input("Enter expiry date: ")
+        exp = input("Enter expiry date (YYYY-MM-DD): ")
 
         c.execute("insert into pantry (Name, Qty, Expiry) values ('{0}', {1}, '{2}')".format(name, qty, exp))
 
