@@ -6,14 +6,14 @@ import mysql.connector as mys
 mycon = mys.connect(host = 'localhost', user = 'root', passwd = '1234')
 c = mycon.cursor()
 
-def print_table(L):
+def print_table(ColumnNames, L):
     def print_border():
         print("+", end = "")
         for i in lens:
             print("-"*(i+2)+"+", end = "")
         print()
 
-    L = list(L)
+    L = [ColumnNames] + L
 
     lens = []
     for i in L[0]:
@@ -39,13 +39,15 @@ def print_table(L):
         for j in range(len(L[i])):
             print(" "+L[i][j]+" ", end = "|")
         print()
+        if i == 0:
+            print_border()
     print_border()
 
 c.execute("drop database if exists SmartKitchen") # Remove in Final Version
 c.execute("create database SmartKitchen")
 c.execute("use SmartKitchen")
 c.execute("create table Pantry (ItemNo integer primary key auto_increment, Name varchar(30), Qty integer, Expiry date)")
-c.execute("create table Recipes (RecipeNo integer primary key, Name varchar(30), Qty integer, Calorie integer, Ingredients varchar(255))")
+c.execute("create table Recipes (RecipeNo integer primary key, Name varchar(30), Qty integer, Calories integer, Ingredients varchar(255))")
 c.execute("create table AvailableRecipes (RecipeNo integer, ItemNo integer, Qty Integer, primary key (ItemNo, RecipeNo), foreign key (ItemNo) references Pantry(ItemNo), foreign key (RecipeNo) references Recipes(RecipeNo))")
 
 RecipeEntries = [
@@ -69,9 +71,15 @@ go = True
 while go:
     current_date = str(date.today())
 
-    print("\n MENU \n What would you like to do? \n 1. View available food stuffs \n 2. View available dishes \n 3. Update pantry's contents \n 4. Close \n")
-    ans = int(input("> "))
-    print()
+    print('\n## MENU ##')
+    print_table(['#','What would you like to do?'], [[1,'View available food stuffs'],[2,'View available dishes'],[3,'View all dishes'],[4,'Update pantry\'s contents'],[5,'Close']])
+
+    try:
+        ans = int(input("> "))
+        print()
+    except ValueError:
+        print("\nInvalid option.")
+        continue
 
     c.execute("select itemno from pantry where qty <= 0 or expiry < '{0}'".format(current_date))
     data = c.fetchall()
@@ -79,7 +87,7 @@ while go:
         c.execute("delete from pantry where itemno = '{0}'".format(row[0]))
     mycon.commit()
 
-    if ans == 1:
+    if int(ans) == 1:
         c.execute("select itemno, name, qty from pantry")
         data = c.fetchall()
 
@@ -87,22 +95,21 @@ while go:
             print("Your pantry is empty.")
 
         else:
-            print_table(data)
+            print_table(['Item No','Item Name','Quantity'],data)
             eat1 = input("Would you like to take an item? (y/n): ")
 
             if eat1.lower() == 'y':
                 eat2 = int(input("Enter the code of the item you would like to take: "))
                 c.execute("select name from pantry where ItemNo = {0}".format(eat2))
                 item = c.fetchone()
-                print(item)
-                c.execute("Delete from pantry where ItemNo = {0}".format(eat2))
+                c.execute("update pantry set qty = qty-1 where ItemNo = {0}".format(eat2))
                 mycon.commit()
                 print("Item", item[0], "removed from pantry")
 
             else:
                 print("Alright.")
        
-    elif ans == 2:
+    elif int(ans) == 2:
         c.execute("select name from pantry")
         data = c.fetchall()
         PresentIngredients = []
@@ -127,11 +134,11 @@ while go:
             print("No recipes can be made")
 
         else:
-            print("\nRecipes you can make:")
+            print("Recipes you can make:")
             for r in AvailableRecipes:
                 print(r[0], "-", r[1])
 
-            choice = int(input("Enter the recipe number you want to create: "))
+            choice = int(input("\nEnter the recipe number you want to create: "))
 
             selected = None
             for r in AvailableRecipes:
@@ -149,15 +156,21 @@ while go:
             else:
                 print("Invalid choice.")
 
-    elif ans == 3:
+    elif int(ans) == 3:
+        c.execute("select * from Recipes")
+        data = c.fetchall()
+        print_table(['Recipe No','Recipe Name','Quantity','Calories','Ingredients'], data)
+
+
+    elif int(ans) == 4:
         name = input("Enter ingredient's name: ")
         qty = int(input("Enter quantity: "))
         exp = input("Enter expiry date (YYYY-MM-DD): ")
 
         c.execute("insert into pantry (Name, Qty, Expiry) values ('{0}', {1}, '{2}')".format(name, qty, exp))
 
-    elif ans == 4:
-        print("Farewell.")
+    elif int(ans) == 5:
+        print("Farewell.\n")
         go = False
     
     else:
