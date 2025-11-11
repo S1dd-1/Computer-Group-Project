@@ -1,11 +1,11 @@
-def print_table(L):
+def print_table(ColumnNames, L):
     def print_border():
         print("+", end = "")
         for i in lens:
             print("-"*(i+2)+"+", end = "")
         print()
 
-    L = list(L)
+    L = [ColumnNames] + L
 
     lens = []
     for i in L[0]:
@@ -31,9 +31,11 @@ def print_table(L):
         for j in range(len(L[i])):
             print(" "+L[i][j]+" ", end = "|")
         print()
+        if i == 0:
+            print_border()
     print_border()
 
-# example
-L1 = ((123,"abc",45),(233,"xxcyz",200))
-print_table(L1)
-
+#test
+ColumnNames = ['Pokedex','Name']
+Records = [['0257','Blaziken'], ['0678','Meowstic'], ['0658','Greninja'], ['0445','Garchomp'], ['0681','Aegislash'], ['0717','Yveltal']]
+print_table(ColumnNames, Records)
