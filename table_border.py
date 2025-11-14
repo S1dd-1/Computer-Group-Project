@@ -37,5 +37,10 @@ def print_table(ColumnNames, L):
 
 #test
 ColumnNames = ['Pokedex','Name']
-Records = [['0257','Blaziken'], ['0678','Meowstic'], ['0658','Greninja'], ['0445','Garchomp'], ['0681','Aegislash'], ['0717','Yveltal']]
+Records = [['0257','Blaziken'], 
+           ['0678','Meowstic'], 
+           ['0658','Greninja'], 
+           ['0445','Garchomp'], 
+           ['0681','Aegislash'], 
+           ['0717','Yveltal']]
 print_table(ColumnNames, Records)
