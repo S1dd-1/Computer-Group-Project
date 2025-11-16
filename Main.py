@@ -1,25 +1,20 @@
 # Made by Siddarth, Ruben, and Sivadath from 12C
 
-# import modules
 from datetime import date, datetime, timedelta
 import mysql.connector as mys
 import csv
 
 # Print graph via data given
 def print_graph(Values):
-
-    for i in range(len(Values)):
-        vals = [[d, round(int(c)/50)*50] for d, c in Values]
-
+    
+    vals = [[d, round(int(c)/50)*50] for d, c in Values]
     qy = [y for x, y in vals]
 
     L = []
-
     L.append("     | 6 5 4 3 2 1 0")
     L.append("   0 +---------------")
 
-    yy = list(range(50, max(qy) + 50, 50))
-
+    yy = list(range(50, max(qy) + 100, 50))
     for y in yy:
         str1 = ' ' * abs(len(str(y)) - 4) + str(y) + ' | '
         for _, yval in vals:
@@ -67,7 +62,7 @@ def calorie_intake(today_calorie):
 
     print_graph(Values)
 
-# OPTIONAL, initialize calorie.csv
+# initialize calorie.csv if it does not exist
 def calorie_initialize():
     today = date.today()
     Values = []
@@ -149,10 +144,14 @@ if count == 0:
     ]
     for i in RecipeEntries: 
         c.execute("insert into Recipes values" + str(i))
-else:
-    pass
-    
+
 mycon.commit()
+
+try:
+    f = open("CalorieIntake.csv",'r')
+    f.close()
+except FileNotFoundError:
+    calorie_initialize()
 
 # Track today's calorie intake
 with open("CalorieIntake.csv",'r',newline='') as csvfile:
@@ -200,7 +199,7 @@ while True:
         c.execute("select itemno, name, qty from pantry")
         data = c.fetchall()
 
-        if c.rowcount == 0:
+        if not data:
             print("Your pantry is empty.")
 
         else:
