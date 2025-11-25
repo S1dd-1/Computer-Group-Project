@@ -120,7 +120,7 @@ mycon = mys.connect(host = 'localhost', user = 'root', passwd = '1234')
 c = mycon.cursor()
 
 # Initialize database
-c.execute("drop database if exists SmartKitchen") # Remove in Final Version
+# c.execute("drop database if exists SmartKitchen") # Remove in Final Version # Removed
 c.execute("create database if not exists SmartKitchen")
 c.execute("use SmartKitchen")
 c.execute("create table if not exists Pantry (ItemNo integer primary key auto_increment, Name varchar(30), Qty integer, Expiry date)")
@@ -135,13 +135,25 @@ if count == 0:
         (3, "Rice", 1, 130, "rice-water-salt"),
         (4, "Oat Meal", 1, 70, "oats-water-milk-salt"),
         (5, "Dosa", 1, 130, "rice-urad dal-water-salt-oil"),
-        (6, "Masala Dosa", 1, 225, "rice-urad dal-water-salt-oil-potato-onion-chili-spices"),
+        (6, "Masala Dosa", 1, 225, "rice-urad dal-water-salt-oil-potato"),
         (7, "Idli", 1, 61, "rice-urad dal-water-salt"),
-        (8, "Sambhar", 1, 260, "toor dal-tamarind-vegetables-onion-tomato-sambhar powder-chili-mustard seeds-curry leaves-oil"),
-        (9, "Coconut Chutney", 1, 60, "coconut-green chili-ginger-curry leaves-salt-water"),
+        (8, "Sambhar", 1, 260, "toor dal-tamarind-vegetables-onion-salt"),
+        (9, "Coconut Chutney", 1, 60, "coconut-green chili-ginger-salt-water"),
         (10, "Boiled Egg", 1, 78, "egg-water-salt"),
-        (11, "Test", 1, 300, "air")
+        (11, "Roti", 1, 120, "wheat flour-water-salt-oil"),
+        (12, "Upma", 1, 180, "rava-water-onion-chili-oil-salt"),
+        (13, "Poha", 1, 150, "poha-onion-chili-potato-oil-salt"),
+        (14, "Curd Rice", 1, 180, "rice-curd-salt-oil-curry leaves"),
+        (15, "Lemon Rice", 1, 190, "rice-lemon juice-turmeric-chili-oil-salt"),
+        (16, "Vegetable Pulao", 1, 250, "rice-carrot-peas-onion-oil-salt"),
+        (17, "Chapati Roll", 1, 210, "chapati-potato-onion-chili-salt"),
+        (18, "Tomato Soup", 1, 90, "tomato-water-salt-pepper-butter"),
+        (19, "Fruit Salad", 1, 95, "banana-apple-papaya-honey"),
+        (20, "Corn Salad", 1, 120, "corn-onion-chili-lemon-salt"),
+        (21, "Fried Rice", 1, 230, "rice-carrot-peas-onion-soy sauce-oil"),
+        (22, "Aloo Curry", 1, 200, "potato-onion-tomato-chili-oil")
     ]
+
     for i in RecipeEntries: 
         c.execute("insert into Recipes values" + str(i))
 
