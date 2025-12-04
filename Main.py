@@ -1,6 +1,5 @@
-# Made by Siddarth, Ruben, and Sivadath from 12C
-
-from datetime import date, datetime, timedelta
+# Import modules
+from datetime import date, timedelta
 import mysql.connector as mys
 import csv
 
@@ -31,7 +30,7 @@ def print_graph(Values):
 # Track calorie intake and call print graph
 def calorie_intake(today_calorie):
 
-    print("You have consumed " + str(today_calorie) + " calories today")
+    print("You have consumed "+str(today_calorie) + " calories today")
 
     with open("CalorieIntake.csv",'r',newline='') as csvfile:
         Values = list(csv.reader(csvfile))
@@ -48,21 +47,23 @@ def calorie_intake(today_calorie):
         for i in range(difference - 1, 0, -1):
             day = today_date - timedelta(days=i)
             Values.append([day.isoformat(), 0])
-        Values.append([today_date.isoformat(), today_calorie])
+        Values.append([today_date.isoformat(),
+                       today_calorie])
 
     else:
         Values.clear()
         for i in range(6, 0, -1):
             day = today_date - timedelta(days=i)
             Values.append([day.isoformat(), 0])
-        Values.append([today_date.isoformat(), today_calorie])
+        Values.append([today_date.isoformat(),
+                       today_calorie])
 
     with open("CalorieIntake.csv",'w',newline='') as csvfile:
         csv.writer(csvfile).writerows(Values)
 
     print_graph(Values)
 
-# initialize calorie.csv if it does not exist
+# Initialize calorie.csv if it does not exist
 def calorie_initialize():
     today = date.today()
     Values = []
@@ -73,7 +74,7 @@ def calorie_initialize():
 
     Values.append([today.isoformat(), 0])
 
-    with open("CalorieIntake.csv", 'w', newline='') as csvfile:
+    with open("CalorieIntake.csv",'w',newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerows(Values)
 
@@ -116,49 +117,73 @@ def print_table(ColumnNames, L):
     print_border()
 
 # Connect to mysql
-mycon = mys.connect(host = 'localhost', user = 'root', passwd = '1234')
+mycon = mys.connect(host = 'localhost',
+                    user = 'root',
+                    passwd = 'hehehe')
 c = mycon.cursor()
 
-# Initialize database
-# c.execute("drop database if exists SmartKitchen") # Remove in Final Version # Removed
+# Initialize database and associated tables
 c.execute("create database if not exists SmartKitchen")
 c.execute("use SmartKitchen")
 c.execute("create table if not exists Pantry (ItemNo integer primary key auto_increment, Name varchar(30), Qty integer, Expiry date)")
 c.execute("create table if not exists Recipes (RecipeNo integer primary key, Name varchar(30), Qty integer, Calories integer, Ingredients varchar(255))")
 
-c.execute("SELECT COUNT(*) FROM Recipes")
-count = c.fetchone()[0]
-if count == 0:
-    RecipeEntries = [
-        (1, "Omlete", 1, 154, "egg-salt-pepper-oil"),
-        (2, "Bread", 1, 265, "flour-yeast-oil-salt-water"),
-        (3, "Rice", 1, 130, "rice-water-salt"),
-        (4, "Oat Meal", 1, 70, "oats-water-milk-salt"),
-        (5, "Dosa", 1, 130, "rice-urad dal-water-salt-oil"),
-        (6, "Masala Dosa", 1, 225, "rice-urad dal-water-salt-oil-potato"),
-        (7, "Idli", 1, 61, "rice-urad dal-water-salt"),
-        (8, "Sambhar", 1, 260, "toor dal-tamarind-vegetables-onion-salt"),
-        (9, "Coconut Chutney", 1, 60, "coconut-green chili-ginger-salt-water"),
-        (10, "Boiled Egg", 1, 78, "egg-water-salt"),
-        (11, "Roti", 1, 120, "wheat flour-water-salt-oil"),
-        (12, "Upma", 1, 180, "rava-water-onion-chili-oil-salt"),
-        (13, "Poha", 1, 150, "poha-onion-chili-potato-oil-salt"),
-        (14, "Curd Rice", 1, 180, "rice-curd-salt-oil-curry leaves"),
-        (15, "Lemon Rice", 1, 190, "rice-lemon juice-turmeric-chili-oil-salt"),
-        (16, "Vegetable Pulao", 1, 250, "rice-carrot-peas-onion-oil-salt"),
-        (17, "Chapati Roll", 1, 210, "chapati-potato-onion-chili-salt"),
-        (18, "Tomato Soup", 1, 90, "tomato-water-salt-pepper-butter"),
-        (19, "Fruit Salad", 1, 95, "banana-apple-papaya-honey"),
-        (20, "Corn Salad", 1, 120, "corn-onion-chili-lemon-salt"),
-        (21, "Fried Rice", 1, 230, "rice-carrot-peas-onion-soy sauce-oil"),
-        (22, "Aloo Curry", 1, 200, "potato-onion-tomato-chili-oil")
-    ]
-
-    for i in RecipeEntries: 
-        c.execute("insert into Recipes values" + str(i))
-
+c.execute("truncate table Recipes")
 mycon.commit()
 
+# Insert recipes
+RecipeEntries = [
+    (1, "Omlete", 1, 154,
+     "egg-salt-pepper-oil"),
+    (2, "Bread", 1, 265,
+     "flour-yeast-oil-salt-water"),
+    (3, "Rice", 1, 130,
+     "rice-water-salt"),
+    (4, "Oat Meal", 1, 70,
+     "oats-water-milk-salt"),
+    (5, "Dosa", 1, 130,
+     "rice-urad dal-water-salt-oil"),
+    (6, "Masala Dosa", 1, 225,
+     "rice-urad dal-water-salt-oil-potato"),
+    (7, "Idli", 1, 61,
+     "rice-urad dal-water-salt"),
+    (8, "Sambhar", 1, 260,
+     "toor dal-tamarind-vegetables-salt"),
+    (9, "Coconut Chutney", 1, 60,
+     "coconut-green chili-salt-water"),
+    (10, "Boiled Egg", 1, 78,
+     "egg-water-salt"),
+    (11, "Roti", 1, 120,
+     "wheat flour-water-salt-oil"),
+    (12, "Upma", 1, 180,
+     "rava-water-onion-chili-oil-salt"),
+    (13, "Poha", 1, 150,
+     "poha-onion-chili-potato-oil-salt"),
+    (14, "Curd Rice", 1, 180,
+     "rice-curd-salt-oil-curry leaves"),
+    (15, "Lemon Rice", 1, 190,
+     "rice-lemon juice-turmeric-chili-oil-salt"),
+    (16, "Vegetable Pulao", 1, 250,
+     "rice-carrot-peas-onion-oil-salt"),
+    (17, "Chapati Roll", 1, 210,
+     "chapati-potato-onion-chili-salt"),
+    (18, "Tomato Soup", 1, 90,
+     "tomato-water-salt-pepper-butter"),
+    (19, "Fruit Salad", 1, 95,
+     "banana-apple-papaya-honey"),
+    (20, "Corn Salad", 1, 120,
+     "corn-onion-chili-lemon-salt"),
+    (21, "Fried Rice", 1, 230,
+     "rice-carrot-peas-onion-soy sauce-oil"),
+    (22, "Aloo Curry", 1, 200,
+     "potato-onion-tomato-chili-oil")
+    ]
+
+for i in RecipeEntries: 
+    c.execute("insert into Recipes values" + str(i))
+mycon.commit()
+
+# CalorieIntake.csv check
 try:
     f = open("CalorieIntake.csv",'r')
     f.close()
@@ -167,17 +192,17 @@ except FileNotFoundError:
 
 # Track today's calorie intake
 with open("CalorieIntake.csv",'r',newline='') as csvfile:
+
     Values = list(csv.reader(csvfile))
-    last_logged_date = date.fromisoformat(Values[-1][0])
-    if last_logged_date == date.today():
+    last_date = date.fromisoformat(Values[-1][0])
+    if last_date == date.today():
         today_calorie = int(Values[-1][1])
     else:
         today_calorie = 0
 
-# Main
+# Main()
 while True:
     current_date = date.today()
-    current_time = datetime.now()
 
     # Menu
     print('\n## MENU ##')
@@ -198,7 +223,7 @@ while True:
     except ValueError:
         print("\nInvalid option.")
         continue
-    
+
     # Delete expired and non-existent ingredients
     c.execute("select itemno from pantry where qty <= 0 or expiry < '%s'"%(current_date,))
     data = c.fetchall()
@@ -215,7 +240,10 @@ while True:
             print("Your pantry is empty.")
 
         else:
-            print_table(['Item No','Item Name','Quantity'],data)
+            print_table(['Item No',
+                         'Item Name',
+                         'Quantity'],
+                         data)
             eat1 = input("Would you like to take an item? (y/n): ")
 
             if eat1.lower() == 'y':
@@ -224,7 +252,7 @@ while True:
                 item = c.fetchone()
                 c.execute("update pantry set qty = qty-1 where ItemNo = %s"%(eat2,))
                 mycon.commit()
-                print("Item " + item[0] + " removed from pantry")
+                print("One " + item[0] + " removed from pantry")
 
             else:
                 print("Alright.")
@@ -241,9 +269,9 @@ while True:
 
         for i in RecipeEntries:
             isPresent = True
-            NeedIngredients = i[4].split("-")
+            NeedIng = i[4].split("-")
 
-            for j in NeedIngredients:
+            for j in NeedIng:
                 if j not in PresentIngredients:
                     isPresent = False
                     break
@@ -256,10 +284,9 @@ while True:
 
         else:
             print("Recipes you can make:")
+            print_table(['#','Recipe Name'], 
+                        [[r[0], r[1]] for r in AvailableRecipes])
 
-            #for r in AvailableRecipes:
-                #print(str(r[0]) + " - " + r[1])
-            print_table(['#','Recipe Name'], [[r[0], r[1]] for r in AvailableRecipes])
             choice = int(input("\nEnter the recipe number you want to create: "))
 
             selected = None
@@ -269,12 +296,12 @@ while True:
                     break
 
             if selected is not None:
-                NeedIngredients = selected[4].split("-")
+                NeedIng = selected[4].split("-")
 
-                for j in NeedIngredients:
+                for j in NeedIng:
                     c.execute("update pantry set qty = qty - 1 where name = '%s'"%(j,))
                     mycon.commit()
-                
+
                 c.execute("select Calories from Recipes where RecipeNo = %s"%(selected[0],))
                 data = c.fetchone()
                 today_calorie += data[0]
@@ -288,7 +315,13 @@ while True:
     elif ans == 3:
         c.execute("select * from Recipes")
         data = c.fetchall()
-        print_table(['Recipe No','Recipe Name','Quantity','Calories','Ingredients'], data)
+
+        print_table(['Recipe No',
+                     'Recipe Name',
+                     'Quantity',
+                     'Calories',
+                     'Ingredients'], 
+                     data)
 
     # Enter new foodstuff
     elif ans == 4:
@@ -299,9 +332,8 @@ while True:
         c.execute("insert into pantry (Name, Qty, Expiry) values ('%s', %s, '%s')"%(name, qty, exp))
         mycon.commit()
 
-    # Show calorie intake of past week and show graph
+    # Show calorie intake of past week with graph
     elif ans == 5:
-        print("Your calorie intake for today is, " + str(today_calorie) + "\n")
         calorie_intake(today_calorie)
 
     # Delete all foodstuff data
@@ -314,7 +346,8 @@ while True:
     elif ans == 9:
         today_date = date.today()
 
-        with open("CalorieIntake.csv",'r',newline='') as csvfile:
+        with open("CalorieIntake.csv",'r',
+                  newline='') as csvfile:
             Values = list(csv.reader(csvfile))
 
         Values.clear()
@@ -323,7 +356,8 @@ while True:
             Values.append([day.isoformat(), 0])
         Values.append([today_date.isoformat(), 0])
 
-        with open("CalorieIntake.csv",'w',newline='') as csvfile:
+        with open("CalorieIntake.csv",'w',
+                  newline='') as csvfile:
             csv.writer(csvfile).writerows(Values)
         
         today_calorie = 0
@@ -337,3 +371,5 @@ while True:
     # Invalid option
     else:
         print("Invalid option.")
+
+# End()
