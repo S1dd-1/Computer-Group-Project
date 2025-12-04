@@ -1,7 +1,4 @@
-# Smart Kitchen
-
-## Contributions
-Made by Siddarth, Ruben, and Sivadath from class 12C
+# Smart Pantry - python+mysql integrated software
 
 ## Features
 1. Stores foodstuffs entered through mysql.
